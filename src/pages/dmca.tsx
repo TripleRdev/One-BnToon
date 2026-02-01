@@ -14,7 +14,7 @@ export default function DMCA() {
               </div>
             </div>
             <h1 className="font-display text-4xl font-bold text-foreground">
-              Copyright & DMCA Policy
+              DMCA & Copyright Policy
             </h1>
             <p className="text-xl text-primary font-semibold">BnToon</p>
           </div>
@@ -22,16 +22,16 @@ export default function DMCA() {
           {/* Introduction */}
           <section className="prose prose-invert max-w-none space-y-4">
             <p className="text-muted-foreground leading-relaxed">
-              BnToon respects the intellectual property rights of artists, authors, publishers, and content owners.
+              BnToon respects creativity, intellectual labor, and the dignity of original work. We are fully committed to complying with the Digital Millennium Copyright Act (DMCA) and all applicable international copyright laws.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              BnToon is a non-commercial, community-driven project created with the goal of making comics accessible to Bengali-speaking readers. The Bengali (Bangla) language currently lags behind in the availability of officially translated comics, manga, and manhwa. As a result, readers from the Bengal region—especially Bangladesh—are often forced to rely solely on English translations.
+              BnToon is a non-commercial, community-driven platform created to promote the Bengali (Bangla) language through high-quality fan translations of comics, manhwa, and manhua. Our purpose is cultural preservation, linguistic accessibility, and literary appreciation.
             </p>
             <p className="text-muted-foreground leading-relaxed">
-              Bangladesh is a rapidly growing audience for anime, manga, and manhwa, and BnToon aims to help these readers enjoy comics in their native language, Bangla (Bengali), for cultural accessibility and language inclusion purposes.
+              We do not claim ownership of any original artwork, stories, characters, or trademarks. All rights remain with their respective authors, artists, and publishers.
             </p>
             <p className="text-muted-foreground leading-relaxed font-medium">
-              BnToon does not claim ownership of any third-party content unless explicitly stated.
+              Our intention is cultural contribution—not infringement.
             </p>
           </section>
 
@@ -44,7 +44,7 @@ export default function DMCA() {
               </h2>
             </div>
             <p className="text-muted-foreground leading-relaxed">
-              If you are a copyright owner or an authorized representative and believe that any content on BnToon infringes upon your copyright, please notify us using the information below. Upon receiving a valid request, we will promptly review and remove the specified content.
+              In accordance with the DMCA (17 U.S.C. § 512), BnToon responds promptly to valid copyright infringement notices. If you are a copyright owner or an authorized representative and believe that content hosted on BnToon infringes your rights, please notify us using the procedure outlined below.
             </p>
           </section>
 
@@ -57,43 +57,43 @@ export default function DMCA() {
               </h2>
             </div>
             <p className="text-muted-foreground">
-              Please send a takedown request to:
+              Please send all DMCA-related notices to the following email address:
             </p>
             <div className="bg-card border border-border rounded-lg p-4">
               <p className="text-foreground font-medium">
                 📧 Contact Email:{" "}
-                <a 
-                  href="mailto:bntoonweb@gmail.com" 
+                <a
+                  href="mailto:bntoonweb@gmail.com"
                   className="text-primary hover:underline"
                 >
                   bntoonweb@gmail.com
                 </a>
               </p>
             </div>
-            
+
             <p className="text-muted-foreground font-medium mt-6">
-              Your notice must include:
+              Your notice must include all of the following:
             </p>
             <ul className="space-y-3 text-muted-foreground list-none">
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>Identification of the copyrighted work you claim has been infringed.</span>
+                <span>Your full legal name and proof of ownership or authorization.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>The exact URL(s) of the content you want removed.</span>
+                <span>A clear description of the copyrighted work.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>Proof that you are the copyright owner or authorized to act on their behalf.</span>
+                <span>The exact URL(s) of the allegedly infringing content.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>A statement that you have a good-faith belief that the disputed use is not authorized by the copyright owner, its agent, or the law.</span>
+                <span>A statement of good-faith belief that the use is not authorized.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>A statement that the information provided is accurate and, under penalty of perjury, that you are authorized to act on behalf of the copyright owner.</span>
+                <span>A statement that the information provided is accurate and made under penalty of perjury.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
@@ -101,7 +101,7 @@ export default function DMCA() {
               </li>
             </ul>
             <p className="text-amber-500 text-sm font-medium mt-4">
-              Incomplete or unverifiable requests may not be processed.
+              Incomplete or unverifiable requests may be delayed or disregarded.
             </p>
           </section>
 
@@ -110,13 +110,13 @@ export default function DMCA() {
             <div className="flex items-center gap-3">
               <AlertTriangle className="h-6 w-6 text-primary" />
               <h2 className="font-display text-2xl font-bold text-foreground">
-                Content Removal Policy
+                Content Removal & Response Policy
               </h2>
             </div>
             <ul className="space-y-3 text-muted-foreground list-none">
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>Content identified in a valid DMCA notice will be removed as quickly as possible.</span>
+                <span>Content identified in a valid DMCA notice will be removed or disabled promptly.</span>
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
@@ -124,7 +124,7 @@ export default function DMCA() {
               </li>
               <li className="flex gap-3">
                 <span className="text-primary">•</span>
-                <span>Repeat infringement may result in permanent removal of the related series or content.</span>
+                <span>Repeat infringement may result in permanent removal of related content or series.</span>
               </li>
             </ul>
           </section>
@@ -132,10 +132,10 @@ export default function DMCA() {
           {/* Disclaimer */}
           <section className="bg-card border border-border rounded-lg p-6 space-y-4">
             <h2 className="font-display text-xl font-bold text-foreground">
-              Disclaimer
+              Disclaimer & Fair Use Notice
             </h2>
             <p className="text-muted-foreground leading-relaxed">
-              BnToon does not host or distribute content with the intent to infringe copyright. Any copyright-protected material is provided with the intent of language accessibility and community benefit only. If any content is found to violate copyright law, it will be removed immediately upon proper notification.
+              BnToon operates under the belief that translation is a transformative act and that content is shared for non-commercial, educational, and cultural purposes only. Fair use is a legal defense, not a guarantee; therefore, we prioritize cooperation with rights holders above all else.
             </p>
           </section>
 
