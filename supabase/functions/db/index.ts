@@ -307,8 +307,8 @@ Deno.serve(async (req) => {
         const type = params.filter_type;
         const genres = params.filter_genres as string[] | null;
         const sortBy = params.sort_by || "relevance";
-        const limit = params.result_limit || 20;
-        const offset = params.result_offset || 0;
+        const limit = Number(params.result_limit) || 20;
+        const offset = Number(params.result_offset) || 0;
 
         let results: any[];
 
@@ -318,8 +318,8 @@ Deno.serve(async (req) => {
           break;
         }
 
-        // Build dynamic query based on filters
-        if (query) {
+        // Build query based on filters - avoid nested template literals
+        if (query && status && type) {
           results = await sql`
             SELECT s.id, s.title, s.alternative_titles, s.description, 
               s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
@@ -335,9 +335,107 @@ Deno.serve(async (req) => {
               (LOWER(s.title) LIKE '%' || LOWER(${query}) || '%'
                 OR s.alternative_titles::text ILIKE '%' || ${query} || '%'
                 OR s.description ILIKE '%' || ${query} || '%')
-              ${status ? sql`AND s.status = ${status}` : sql``}
-              ${type ? sql`AND s.type = ${type}` : sql``}
+              AND s.status = ${status}
+              AND s.type = ${type}
             ORDER BY relevance_score DESC, s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (query && status) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              CASE 
+                WHEN LOWER(s.title) = LOWER(${query}) THEN 1.0
+                WHEN LOWER(s.title) LIKE LOWER(${query}) || '%' THEN 0.9
+                WHEN LOWER(s.title) LIKE '%' || LOWER(${query}) || '%' THEN 0.7
+                ELSE 0.3
+              END as relevance_score
+            FROM series s
+            WHERE 
+              (LOWER(s.title) LIKE '%' || LOWER(${query}) || '%'
+                OR s.alternative_titles::text ILIKE '%' || ${query} || '%'
+                OR s.description ILIKE '%' || ${query} || '%')
+              AND s.status = ${status}
+            ORDER BY relevance_score DESC, s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (query && type) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              CASE 
+                WHEN LOWER(s.title) = LOWER(${query}) THEN 1.0
+                WHEN LOWER(s.title) LIKE LOWER(${query}) || '%' THEN 0.9
+                WHEN LOWER(s.title) LIKE '%' || LOWER(${query}) || '%' THEN 0.7
+                ELSE 0.3
+              END as relevance_score
+            FROM series s
+            WHERE 
+              (LOWER(s.title) LIKE '%' || LOWER(${query}) || '%'
+                OR s.alternative_titles::text ILIKE '%' || ${query} || '%'
+                OR s.description ILIKE '%' || ${query} || '%')
+              AND s.type = ${type}
+            ORDER BY relevance_score DESC, s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (query) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              CASE 
+                WHEN LOWER(s.title) = LOWER(${query}) THEN 1.0
+                WHEN LOWER(s.title) LIKE LOWER(${query}) || '%' THEN 0.9
+                WHEN LOWER(s.title) LIKE '%' || LOWER(${query}) || '%' THEN 0.7
+                ELSE 0.3
+              END as relevance_score
+            FROM series s
+            WHERE 
+              (LOWER(s.title) LIKE '%' || LOWER(${query}) || '%'
+                OR s.alternative_titles::text ILIKE '%' || ${query} || '%'
+                OR s.description ILIKE '%' || ${query} || '%')
+            ORDER BY relevance_score DESC, s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (status && type) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              1.0 as relevance_score
+            FROM series s
+            WHERE s.status = ${status} AND s.type = ${type}
+            ORDER BY s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (status) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              1.0 as relevance_score
+            FROM series s
+            WHERE s.status = ${status}
+            ORDER BY s.updated_at DESC
+            LIMIT ${limit}
+            OFFSET ${offset}
+          ` as any[];
+        } else if (type) {
+          results = await sql`
+            SELECT s.id, s.title, s.alternative_titles, s.description, 
+              s.cover_url, s.status, s.type, s.rating, s.is_featured, s.updated_at,
+              COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
+              1.0 as relevance_score
+            FROM series s
+            WHERE s.type = ${type}
+            ORDER BY s.updated_at DESC
             LIMIT ${limit}
             OFFSET ${offset}
           ` as any[];
@@ -348,9 +446,6 @@ Deno.serve(async (req) => {
               COALESCE((SELECT COUNT(*) FROM chapters WHERE series_id = s.id), 0)::int as chapters_count,
               1.0 as relevance_score
             FROM series s
-            WHERE 1=1
-              ${status ? sql`AND s.status = ${status}` : sql``}
-              ${type ? sql`AND s.type = ${type}` : sql``}
             ORDER BY s.updated_at DESC
             LIMIT ${limit}
             OFFSET ${offset}
