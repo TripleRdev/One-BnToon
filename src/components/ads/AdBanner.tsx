@@ -1,20 +1,16 @@
 import { useEffect, useRef } from "react";
 
 interface AdBannerProps {
-  /** Unique container ID for the ad script */
-  containerId: string;
-  /** Script URL from ad network */
-  scriptUrl: string;
-  /** Optional additional className */
+  /** Optional className for spacing */
   className?: string;
 }
 
 /**
- * Horizontal banner ad component - async loading, non-blocking
- * Safe placements: header area, between sections, footer area
- * NEVER use inside reader pages or between chapter images
+ * Adsterra 320x50 Display Banner
+ * Safe placements: between sections, header/footer areas
+ * DO NOT use inside reader pages
  */
-export function AdBanner({ containerId, scriptUrl, className = "" }: AdBannerProps) {
+export function AdBanner({ className = "" }: AdBannerProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const loadedRef = useRef(false);
 
@@ -22,36 +18,39 @@ export function AdBanner({ containerId, scriptUrl, className = "" }: AdBannerPro
     const container = containerRef.current;
     if (!container || loadedRef.current) return;
 
-    // Check if container already has the script
-    if (container.querySelector("script")) return;
-
     loadedRef.current = true;
 
-    // Create script element with async loading
+    // Define Adsterra options (required)
+    // @ts-ignore
+    window.atOptions = {
+      key: "60b102fe0a6bd36b3aa4e1cf27080918",
+      format: "iframe",
+      height: 50,
+      width: 320,
+      params: {},
+    };
+
     const script = document.createElement("script");
-    script.src = scriptUrl;
+    script.src =
+      "https://openairtowhardworking.com/60b102fe0a6bd36b3aa4e1cf27080918/invoke.js";
     script.async = true;
     script.setAttribute("data-cfasync", "false");
-    
-    // Append to container, not body - keeps ads contained
+
     container.appendChild(script);
 
     return () => {
-      // Cleanup on unmount
       if (container.contains(script)) {
         container.removeChild(script);
       }
     };
-  }, [scriptUrl]);
+  }, []);
 
   return (
     <div
       ref={containerRef}
-      id={containerId}
-      className={`ad-banner w-full flex items-center justify-center min-h-[90px] ${className}`}
+      className={`ad-banner w-full flex justify-center items-center min-h-[50px] ${className}`}
       aria-label="Advertisement"
       role="complementary"
     />
   );
 }
-
