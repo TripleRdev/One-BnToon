@@ -10,7 +10,6 @@ import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
 import { AdsterraBanner } from "@/components/ads/AdsterraBanner";
-import { AD_CONFIG } from "@/components/ads/adConfig";
 import { AdsterraSidebar } from "@/components/ads/AdsterraSidebar";
 
 const Index = () => {
