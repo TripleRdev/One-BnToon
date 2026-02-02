@@ -11,6 +11,8 @@ import { BackToTop } from "@/components/ui/back-to-top";
 import { BookOpen, X, Filter, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
 import { AdBanner728 } from "@/components/ads/AdBanner728";
+import { AdBanner } from "@/components/ads/AdBanner";
+import { AD_CONFIG } from "@/components/ads/adConfig";
 
 const Browse = () => {
   const {
