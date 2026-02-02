@@ -9,7 +9,7 @@ import { JoinUsCard } from "@/components/home/JoinUsCard";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
-import { AdBanner } from "@/components/ads/AdBanner";
+import { AdsterraBanner } from "@/components/ads/AdsterraBanner";
 import { AD_CONFIG } from "@/components/ads/adConfig";
 import { SidebarAd } from "@/components/ads/SidebarAd";
 
@@ -66,8 +66,13 @@ const Index = () => {
                 <FeaturedSection series={featuredSeries} />
               ) : null}
 
-              {/* Ad Banner - async loaded, non-blocking */}
-              <AdBanner className="my-6" />
+              {/* Adsterra Banner – SAFE placement */}
+            <AdsterraBanner
+              adKey="60b102fe0a6bd36b3aa4e1cf27080918"
+              width={320}
+              height={50}
+              className="my-6"
+            />
 
               {/* Latest Updates Section */}
               <section>
