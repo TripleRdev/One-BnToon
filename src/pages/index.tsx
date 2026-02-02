@@ -9,6 +9,8 @@ import { JoinUsCard } from "@/components/home/JoinUsCard";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
+import { AdBanner } from "@/components/ads/AdBanner";
+import { AD_CONFIG } from "@/components/ads/adConfig";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -25,35 +27,6 @@ const Index = () => {
       navigate("/admin");
     }
   }, [searchParams, navigate]);
-
-  useEffect(() => {
-  const container = document.getElementById(
-    "container-c35c6f6f42ee902bbfca715ccd1d497f"
-  );
-
-  if (!container || container.hasChildNodes()) return;
-
-  const script = document.createElement("script");
-  script.src =
-    "https://pl28562322.effectivegatecpm.com/c35c6f6f42ee902bbfca715ccd1d497f/invoke.js";
-  script.async = true;
-  script.setAttribute("data-cfasync", "false");
-
-  container.appendChild(script);
-}, []);
-
-
-  
-  useEffect(() => {
-  if (document.getElementById("adsterra-pop")) return;
-
-  const script = document.createElement("script");
-  script.id = "adsterra-pop";
-  script.src =
-    "https://pl28562281.effectivegatecpm.com/c1/b5/46/c1b546b49059ac9e88a2480f34e6bc7a.js";
-
-  document.body.appendChild(script);
-}, []);
 
 
   return (
@@ -92,8 +65,12 @@ const Index = () => {
                 <FeaturedSection series={featuredSeries} />
               ) : null}
 
-              {/* Ad Container */}
-              <div id="container-c35c6f6f42ee902bbfca715ccd1d497f" className="mb-6"></div>
+              {/* Ad Banner - async loaded, non-blocking */}
+              <AdBanner
+                containerId={AD_CONFIG.nativeBanner.containerId}
+                scriptUrl={AD_CONFIG.nativeBanner.scriptUrl}
+                className="mb-6"
+              />
 
               {/* Latest Updates Section */}
               <section>
