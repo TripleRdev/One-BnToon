@@ -20,12 +20,12 @@ export function AdsterraBanner({
     if (loadedRef.current) return;
     loadedRef.current = true;
 
-    // define global atOptions BEFORE script loads
+    // VERY IMPORTANT: isolate atOptions
     (window as any).atOptions = {
       key: adKey,
       format: "iframe",
-      width,
       height,
+      width,
       params: {},
     };
 
@@ -40,7 +40,8 @@ export function AdsterraBanner({
   return (
     <div
       ref={containerRef}
-      className={`w-full flex justify-center items-center min-h-[${height}px] ${className}`}
+      className={`flex justify-center items-center ${className}`}
+      style={{ minHeight: height }}
       aria-label="Advertisement"
     />
   );
