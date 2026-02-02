@@ -10,9 +10,8 @@ import { Badge } from "@/components/ui/badge";
 import { BackToTop } from "@/components/ui/back-to-top";
 import { BookOpen, X, Filter, Loader2 } from "lucide-react";
 import { useState, useMemo } from "react";
-import { AdBanner } from "@/components/ads/AdBanner";
 import { AD_CONFIG } from "@/components/ads/adConfig";
-import { SidebarAd } from "@/components/ads/SidebarAd";
+import { AdsterraBanner } from "@/components/ads/AdsterraBanner";
 
 const Browse = () => {
   const {
@@ -72,8 +71,15 @@ const Browse = () => {
           <p className="text-muted-foreground">Explore our collection of comics and manga</p>
         </div>
 
-        {/* Top Banner Ad */}
-            <AdBanner className="my-6" />
+{/* Top Banner Ad – SAFE placement */}
+<div className="my-6 flex justify-center">
+  <AdsterraBanner
+    adKey="60b102fe0a6bd36b3aa4e1cf27080918"
+    width={320}
+    height={50}
+  />
+</div>
+
 
         {/* Genre Filters */}
         {!genresLoading && genres?.length > 0 && (
@@ -148,8 +154,14 @@ const Browse = () => {
               ))}
             </div>
 
-            {/* Mid-page Banner Ad */}
-              <AdBanner className="my-10" />
+{/* Mid-page Banner Ad – SAFE placement */}
+<div className="my-10 flex justify-center">
+  <AdsterraBanner
+    adKey="60b102fe0a6bd36b3aa4e1cf27080918"
+    width={320}
+    height={50}
+  />
+</div>
             
             {/* Infinite Scroll Trigger */}
             <div ref={loadMoreRef} className="mt-10 flex justify-center">
