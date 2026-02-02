@@ -71,14 +71,15 @@ const Browse = () => {
           <p className="text-muted-foreground">Explore our collection of comics and manga</p>
         </div>
 
-{/* Top Banner Ad – SAFE placement */}
-<div className="my-6 flex justify-center">
+{/* Top Leaderboard Ad – Desktop focused, SAFE */}
+<div className="my-6 flex justify-center overflow-x-auto">
   <AdsterraBanner
-    adKey="60b102fe0a6bd36b3aa4e1cf27080918"
-    width={320}
-    height={50}
+    adKey="55df5565f644bb1aefe96eefc0393e90"
+    width={728}
+    height={90}
   />
 </div>
+
 
 
         {/* Genre Filters */}
@@ -154,14 +155,14 @@ const Browse = () => {
               ))}
             </div>
 
-{/* Mid-page Banner Ad – SAFE placement */}
+{/* Mid-page Banner Ad – SAFE placement 
 <div className="my-10 flex justify-center">
   <AdsterraBanner
     adKey="60b102fe0a6bd36b3aa4e1cf27080918"
     width={320}
     height={50}
   />
-</div>
+</div>*/}
             
             {/* Infinite Scroll Trigger */}
             <div ref={loadMoreRef} className="mt-10 flex justify-center">
