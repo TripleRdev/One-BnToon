@@ -1,9 +1,27 @@
  (cd "$(git rev-parse --show-toplevel)" && git apply --3way <<'EOF' 
 diff --git a/src/components/ads/AdUnit.tsx b/src/components/ads/AdUnit.tsx
-index 33bc119485f77c20f3a33360cde9f73fe9280327..d6a6af4041312a5147c25dbb6b710e58b0cbc9c3 100644
+index 33bc119485f77c20f3a33360cde9f73fe9280327..b4aa2eabdf0eae559d352b4e1a54fb435a3b605d 100644
 --- a/src/components/ads/AdUnit.tsx
 +++ b/src/components/ads/AdUnit.tsx
-@@ -13,121 +13,118 @@ interface AdUnitProps {
+@@ -1,133 +1,159 @@
+ import { useEffect, useRef, useState } from "react";
+ 
+ /**
+  * Singleton registry to track loaded ad units and prevent duplicates
+  */
+ const adRegistry = new Map<string, boolean>();
+ const loadedScripts = new Set<string>();
++let adLoadQueue: Promise<void> = Promise.resolve();
++
++const enqueueAdLoad = (load: () => Promise<void>) => {
++  adLoadQueue = adLoadQueue.then(load).catch(() => undefined);
++  return adLoadQueue;
++};
+ 
+ interface AdUnitProps {
+   /** Unique Adsterra ad key */
+   adKey: string;
+   /** Ad width in pixels */
    width: number;
    /** Ad height in pixels */
    height: number;
@@ -57,34 +75,48 @@ index 33bc119485f77c20f3a33360cde9f73fe9280327..d6a6af4041312a5147c25dbb6b710e58
  
      // Create unique namespace for this ad's options
      const optionsVarName = `atOptions_${placementId.replace(/-/g, "_")}`;
++    const adOptions = {
++      key: adKey,
++      format: "iframe",
++      height,
++      width,
++      params: {},
++    };
  
-     // Inline config script with SCOPED variable
-     const configScript = document.createElement("script");
-     configScript.type = "text/javascript";
-     configScript.textContent = `
-       window['${optionsVarName}'] = {
-         'key': '${adKey}',
-         'format': 'iframe',
-         'height': ${height},
-         'width': ${width},
-         'params': {}
-       };
-       window.atOptions = window['${optionsVarName}'];
-     `;
+-    // Inline config script with SCOPED variable
+-    const configScript = document.createElement("script");
+-    configScript.type = "text/javascript";
+-    configScript.textContent = `
+-      window['${optionsVarName}'] = {
+-        'key': '${adKey}',
+-        'format': 'iframe',
+-        'height': ${height},
+-        'width': ${width},
+-        'params': {}
+-      };
+-      window.atOptions = window['${optionsVarName}'];
+-    `;
++    (window as typeof window & { [key: string]: unknown })[optionsVarName] = adOptions;
  
      // Invoke script (Adsterra domain)
      const invokeScript = document.createElement("script");
      const scriptUrl = `https://www.topcreativeformat.com/${adKey}/invoke.js`;
      invokeScript.src = scriptUrl;
--    invokeScript.async = true;
-+    invokeScript.async = false;
-+    invokeScript.defer = false;
+     invokeScript.async = true;
      invokeScript.setAttribute("data-cfasync", "false");
  
      // Error handling for ad blockers
-     invokeScript.onerror = () => {
-       setAdBlocked(true);
-       adRegistry.delete(containerId);
+-    invokeScript.onerror = () => {
+-      setAdBlocked(true);
+-      adRegistry.delete(containerId);
++    let resolved = false;
++    let resolveLoad: (() => void) | null = null;
++    const finalize = () => {
++      if (resolved) return;
++      resolved = true;
++      if (invokeScript.parentNode) {
++        invokeScript.parentNode.removeChild(invokeScript);
++      }
      };
  
      // Timeout fallback for silent blocks
@@ -94,11 +126,37 @@ index 33bc119485f77c20f3a33360cde9f73fe9280327..d6a6af4041312a5147c25dbb6b710e58
          setAdBlocked(true);
 +        adRegistry.delete(containerId);
 +        container.innerHTML = "";
++        resolveLoad?.();
++        void finalize();
        }
      }, 5000);
  
-     container.appendChild(configScript);
-     container.appendChild(invokeScript);
+-    container.appendChild(configScript);
+-    container.appendChild(invokeScript);
++    void enqueueAdLoad(
++      () =>
++        new Promise((resolve) => {
++          resolveLoad = resolve;
++          if (!containerRef.current) {
++            resolve();
++            return;
++          }
++
++          invokeScript.onload = () => {
++            resolve();
++            void finalize();
++          };
++          invokeScript.onerror = () => {
++            setAdBlocked(true);
++            adRegistry.delete(containerId);
++            resolve();
++            void finalize();
++          };
++
++          window.atOptions = adOptions;
++          container.appendChild(invokeScript);
++        })
++    );
  
      return () => {
        clearTimeout(timeout);
