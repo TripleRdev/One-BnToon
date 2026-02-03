@@ -71,15 +71,15 @@ const Browse = () => {
           <p className="text-muted-foreground">Explore our collection of comics and manga</p>
         </div>
 
-{/* Leaderboard Ad – Desktop focused, SAFE */}
-<div className="my-6 flex justify-center overflow-x-auto">
-  <AdUnit
-    placementId="browse-leaderboard"
-    adKey={AD_UNITS.leaderboard.adKey}
-    width={AD_UNITS.leaderboard.width}
-    height={AD_UNITS.leaderboard.height}
-  />
-</div>
+        {/* Leaderboard Ad – Adsterra */}
+        <div className="my-6 flex justify-center overflow-x-auto">
+          <AdUnit
+            placementId="browse-leaderboard"
+            adKey={AD_UNITS.leaderboard.adKey}
+            width={AD_UNITS.leaderboard.width}
+            height={AD_UNITS.leaderboard.height}
+          />
+        </div>
 
 
 
