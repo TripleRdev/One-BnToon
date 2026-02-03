@@ -19,6 +19,7 @@ const Index = () => {
   const featuredSeries = featuredData || [];
   const latestSeries = latestSeriesData || [];
   const allowAdultAds = import.meta.env.VITE_ALLOW_ADULT_ADS === "true";
+  const allowAdultAds = import.meta.env.VITE_ALLOW_ADULT_ADS === "true";
 
   // Secret URL parameter access: ?access=bntoonadmin
   useEffect(() => {
@@ -136,11 +137,17 @@ const Index = () => {
 
             <div className="space-y-6">
               <PopularSidebar />
-              {/* Sidebar Ad */}
+              {/* Sidebar Ad */}y
               <HilltopAd
                 slotId="home-sidebar"
                 scriptSrc="//potable-original.com/bUX/V.ssdPG-lf0FYFW_cu/zeHmg9quIZbUAlrkUPVTZY/3_NsjpMZyJMLDOAntbNZj/c/2AMxzlIlwCMZQq"
-                allowAdultAds={allowAdultAds}
+                allowAdultAds={allowAdultAds}                
+              <AdUnit
+                placementId="home-sidebar"
+                adKey={AD_UNITS.sidebar.adKey}
+                width={AD_UNITS.sidebar.width}
+                height={AD_UNITS.sidebar.height}
+                usesContainerId={AD_UNITS.sidebar.usesContainerId}
               />
               <JoinUsCard />
             </div>
