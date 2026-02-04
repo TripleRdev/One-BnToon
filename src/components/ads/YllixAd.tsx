@@ -58,7 +58,7 @@ const YllixAd = memo(function YllixAd({
     const container = containerRef.current;
     if (!container) return;
 
-    const existingScript = document.querySelector<HTMLScriptElement>(
+    const existingScript = container.querySelector<HTMLScriptElement>(
       `script[data-ylx-script="${scriptKey}"]`
     );
     if (existingScript) {
@@ -68,7 +68,7 @@ const YllixAd = memo(function YllixAd({
 
     const script = document.createElement("script");
     script.src = scriptSrc;
-    script.async = true;
+    script.type = "text/javascript";
     script.dataset.ylxScript = scriptKey;
     script.dataset.ylxZone = zoneId;
     script.dataset.ylxWidth = String(width);
