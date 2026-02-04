@@ -56,11 +56,6 @@ const Browse = () => {
   const isLoading = seriesLoading || genresLoading || loadingGenreMap;
   const hasActiveFilters = selectedGenres.length > 0;
 
-  // Split series into two halves for mid-page ad insertion
-  const midIndex = Math.ceil(filteredSeries.length / 2);
-  const firstHalf = filteredSeries.slice(0, midIndex);
-  const secondHalf = filteredSeries.slice(midIndex);
-
   return (
     <Layout>
       <SEO 
@@ -75,7 +70,7 @@ const Browse = () => {
           <p className="text-muted-foreground">Explore our collection of comics and manga</p>
         </div>
 
-        {/* Leaderboard Ad – between description and genre filter */}
+        {/* Leaderboard Ad – 728x90 between description and genre filter */}
         <div className="my-6 flex justify-center overflow-x-auto">
           <AdUnit
             adKey="55df5565f644bb1aefe96eefc0393e90"
@@ -144,9 +139,8 @@ const Browse = () => {
           </div>
         ) : filteredSeries.length > 0 ? (
           <>
-            {/* First half of series */}
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {firstHalf.map((s) => (
+              {filteredSeries.map((s) => (
                 <BrowseCard
                   key={s.id}
                   id={s.id}
@@ -158,35 +152,6 @@ const Browse = () => {
                 />
               ))}
             </div>
-
-            {/* Mid-page Banner Ad */}
-            {secondHalf.length > 0 && (
-              <div className="my-8 flex justify-center">
-                <AdUnit
-                  adKey="60b102fe0a6bd36b3aa4e1cf27080918"
-                  width={320}
-                  height={50}
-                  placementId="browse-mid-banner"
-                />
-              </div>
-            )}
-
-            {/* Second half of series */}
-            {secondHalf.length > 0 && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {secondHalf.map((s) => (
-                  <BrowseCard
-                    key={s.id}
-                    id={s.id}
-                    title={s.title}
-                    coverUrl={s.cover_url}
-                    status={s.status}
-                    type={s.type}
-                    chaptersCount={s.chaptersCount}
-                  />
-                ))}
-              </div>
-            )}
             
             {/* Infinite Scroll Trigger */}
             <div ref={loadMoreRef} className="mt-10 flex justify-center">
