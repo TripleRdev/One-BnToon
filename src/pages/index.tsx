@@ -9,7 +9,7 @@ import { JoinUsCard } from "@/components/home/JoinUsCard";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
-import { AdUnit } from "@/components/ads/AdUnit";
+import { AdUnit, NativeAdUnit } from "@/components/ads/AdUnit";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -64,7 +64,7 @@ const Index = () => {
                 <FeaturedSection series={featuredSeries} />
               ) : null}
 
-              {/* Ad between Featured and Latest Updates */}
+              {/* Ad between Featured and Latest Updates - 320x50 Banner */}
               <div className="my-6 flex justify-center">
                 <AdUnit
                   adKey="60b102fe0a6bd36b3aa4e1cf27080918"
@@ -137,13 +137,12 @@ const Index = () => {
 
             <div className="space-y-6">
               <PopularSidebar />
-              {/* Sidebar Ad between Popular and Join Us */}
-              <AdUnit
+              {/* Sidebar Ad between Popular and Join Us - Native Ad */}
+              <NativeAdUnit
                 adKey="c35c6f6f42ee902bbfca715ccd1d497f"
                 width={300}
                 height={250}
                 placementId="home-sidebar"
-                usesContainerId
               />
               <JoinUsCard />
             </div>
