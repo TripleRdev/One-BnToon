@@ -9,7 +9,7 @@ import { JoinUsCard } from "@/components/home/JoinUsCard";
 import { SEO } from "@/components/SEO";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ChevronRight } from "lucide-react";
-import { HilltopAd } from "@/components/ads/HilltopAd";
+import { AdUnit } from "@/components/ads/AdUnit";
 
 const Index = () => {
   const navigate = useNavigate();
@@ -18,7 +18,6 @@ const Index = () => {
   const { data: latestSeriesData, isLoading: isLatestLoading } = useSeriesWithLatestChapters(12);
   const featuredSeries = featuredData || [];
   const latestSeries = latestSeriesData || [];
-  const allowAdultAds = import.meta.env.VITE_ALLOW_ADULT_ADS === "true";
 
   // Secret URL parameter access: ?access=bntoonadmin
   useEffect(() => {
@@ -65,13 +64,15 @@ const Index = () => {
                 <FeaturedSection series={featuredSeries} />
               ) : null}
 
-              {/* Mobile Banner – Hilltop */}
-              <HilltopAd
-                slotId="home-mobile-banner"
-                scriptSrc="//potable-original.com/bUX/V.ssdPG-lf0FYFW_cu/zeHmg9quIZbUAlrkUPVTZY/3_NsjpMZyJMLDOAntbNZj/c/2AMxzlIlwCMZQq"
-                className="my-6"
-                allowAdultAds={allowAdultAds}
-              />
+              {/* Ad between Featured and Latest Updates */}
+              <div className="my-6 flex justify-center">
+                <AdUnit
+                  adKey="60b102fe0a6bd36b3aa4e1cf27080918"
+                  width={320}
+                  height={50}
+                  placementId="home-featured-banner"
+                />
+              </div>
 
               {/* Latest Updates Section */}
               <section>
@@ -136,11 +137,13 @@ const Index = () => {
 
             <div className="space-y-6">
               <PopularSidebar />
-              {/* Sidebar Ad */}
-              <HilltopAd
-                slotId="home-sidebar"
-                scriptSrc="//potable-original.com/bUX/V.ssdPG-lf0FYFW_cu/zeHmg9quIZbUAlrkUPVTZY/3_NsjpMZyJMLDOAntbNZj/c/2AMxzlIlwCMZQq"
-                allowAdultAds={allowAdultAds}
+              {/* Sidebar Ad between Popular and Join Us */}
+              <AdUnit
+                adKey="c35c6f6f42ee902bbfca715ccd1d497f"
+                width={300}
+                height={250}
+                placementId="home-sidebar"
+                usesContainerId
               />
               <JoinUsCard />
             </div>
