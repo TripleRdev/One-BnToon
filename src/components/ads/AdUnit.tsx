@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 
 interface AdsterraAdProps {
   /** Unique Adsterra ad key */
@@ -14,8 +14,7 @@ interface AdsterraAdProps {
 }
 
 /**
- * Adsterra ad component using iframe srcdoc for complete isolation.
- * Each ad gets its own window context, preventing atOptions conflicts.
+ * Adsterra ad component using in-page script injection.
  */
 export function AdUnit({
   adKey,
@@ -24,59 +23,46 @@ export function AdUnit({
   className = "",
   placementId,
 }: AdsterraAdProps) {
-  // Generate the isolated HTML document for the ad
-  const adHTML = useMemo(() => {
-    return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      min-height: 100%;
-      background: transparent;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <script type="text/javascript">
-    atOptions = {
-      'key': '${adKey}',
-      'format': 'iframe',
-      'height': ${height},
-      'width': ${width},
-      'params': {}
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.innerHTML = "";
+    (window as typeof window & { atOptions?: Record<string, unknown> }).atOptions = {
+      key: adKey,
+      format: "iframe",
+      height,
+      width,
+      params: {},
     };
-  </script>
-  <script type="text/javascript" src="//www.highperformanceformat.com/${adKey}/invoke.js"></script>
-</body>
-</html>
-    `.trim();
-  }, [adKey, width, height]);
+
+    const script = document.createElement("script");
+    script.type = "text/javascript";
+    script.async = true;
+    script.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+    container.appendChild(script);
+
+    return () => {
+      container.innerHTML = "";
+    };
+  }, [adKey, height, width]);
 
   return (
     <div 
       className={`flex justify-center items-center ${className}`}
       data-ad-placement={placementId}
     >
-      <iframe
-        srcDoc={adHTML}
-        width={width}
-        height={height}
+      <div
+        ref={containerRef}
         style={{
-          border: "none",
+          width,
+          height,
           overflow: "hidden",
           display: "block",
         }}
-        scrolling="no"
-        title={`Advertisement - ${placementId}`}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        aria-label={`Advertisement - ${placementId}`}
       />
     </div>
   );
@@ -93,50 +79,44 @@ export function NativeAdUnit({
   className = "",
   placementId,
 }: AdsterraAdProps) {
-  const adHTML = useMemo(() => {
-    return `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { 
-      display: flex; 
-      justify-content: center; 
-      align-items: center;
-      min-height: 100%;
-      background: transparent;
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
-  <script async="async" data-cfasync="false" src="//www.highperformanceformat.com/${adKey}/invoke.js"></script>
-  <div id="container-${adKey}"></div>
-</body>
-</html>
-    `.trim();
-  }, [adKey]);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const containerId = useMemo(() => `container-${adKey}`, [adKey]);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    container.innerHTML = "";
+    const adContainer = document.createElement("div");
+    adContainer.id = containerId;
+    container.appendChild(adContainer);
+
+    const script = document.createElement("script");
+    script.async = true;
+    script.type = "text/javascript";
+    script.src = `//www.highperformanceformat.com/${adKey}/invoke.js`;
+    script.dataset.cfasync = "false";
+    container.appendChild(script);
+
+    return () => {
+      container.innerHTML = "";
+    };
+  }, [adKey, containerId]);
 
   return (
     <div 
       className={`flex justify-center items-center ${className}`}
       data-ad-placement={placementId}
     >
-      <iframe
-        srcDoc={adHTML}
-        width={width}
-        height={height}
+      <div
+        ref={containerRef}
         style={{
-          border: "none",
+          width,
+          height,
           overflow: "hidden",
           display: "block",
         }}
-        scrolling="no"
-        title={`Advertisement - ${placementId}`}
-        sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+        aria-label={`Advertisement - ${placementId}`}
       />
     </div>
   );
