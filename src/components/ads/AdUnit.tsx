@@ -1,11 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { deleteAdRegistry, hasAdRegistry, setAdRegistry } from "./adRegistry";
-let adLoadQueue: Promise<void> = Promise.resolve();
-
-const enqueueAdLoad = (load: () => Promise<void>) => {
-  adLoadQueue = adLoadQueue.then(load).catch(() => undefined);
-  return adLoadQueue;
-};
 
 interface AdUnitProps {
   /** Unique Adsterra ad key */
@@ -26,7 +20,6 @@ interface AdUnitProps {
  * Unified Adsterra ad component with:
  * - Singleton script loading (no duplicates)
  * - StrictMode-safe mounting
- * - Scoped atOptions (no global conflicts)
  * - Graceful ad-blocker fallback
  * - SPA routing compatible
  */
@@ -62,88 +55,48 @@ export function AdUnit({
     // Clear any existing content
     container.innerHTML = "";
 
-    // Create unique namespace for this ad's options
-    const optionsVarName = `atOptions_${placementId.replace(/-/g, "_")}`;
-    const adOptions = {
-      key: adKey,
-      format: "iframe",
-      height,
-      width,
-      params: {},
-    };
-    const globalWindow = window as typeof window & { [key: string]: unknown };
+    // For non-container ads, we need to set atOptions BEFORE loading script
     if (!usesContainerId) {
-      globalWindow[optionsVarName] = adOptions;
+      // Create inline script to set atOptions
+      const optionsScript = document.createElement("script");
+      optionsScript.textContent = `
+        window.atOptions = {
+          'key': '${adKey}',
+          'format': 'iframe',
+          'height': ${height},
+          'width': ${width},
+          'params': {}
+        };
+      `;
+      container.appendChild(optionsScript);
     }
 
     // Invoke script (Adsterra domain)
     const invokeScript = document.createElement("script");
-    const scriptUrl = `https://openairtowhardworking.com/${adKey}/invoke.js`;
-    invokeScript.src = scriptUrl;
-    invokeScript.async = usesContainerId;
-    if (!usesContainerId) {
-      invokeScript.defer = false;
-    }
+    invokeScript.src = `https://openairtowhardworking.com/${adKey}/invoke.js`;
+    invokeScript.async = true;
     invokeScript.setAttribute("data-cfasync", "false");
-    invokeScript.referrerPolicy = "no-referrer-when-downgrade";
-    invokeScript.crossOrigin = "anonymous";
 
     // Error handling for ad blockers
-    let resolved = false;
-    let resolveLoad: (() => void) | null = null;
-    const finalize = () => {
-      if (resolved) return;
-      resolved = true;
-      if (invokeScript.parentNode) {
-        invokeScript.parentNode.removeChild(invokeScript);
+    invokeScript.onerror = () => {
+      if (isActive) {
+        setAdBlocked(true);
       }
-      if (!usesContainerId && window.atOptions === adOptions) {
-        delete window.atOptions;
-      }
+      deleteAdRegistry(containerId);
     };
 
-    // Timeout fallback for silent blocks
+    container.appendChild(invokeScript);
+
+    // Timeout fallback for silent blocks (e.g., network issues)
     const timeout = setTimeout(() => {
-      if (container.children.length <= 2) {
-        // Only our scripts, no ad iframe
-        if (isActive) {
-          setAdBlocked(true);
-        }
+      // Check if ad iframe was created
+      const hasIframe = container.querySelector("iframe");
+      if (!hasIframe && isActive) {
+        setAdBlocked(true);
         deleteAdRegistry(containerId);
         container.innerHTML = "";
-        resolveLoad?.();
-        void finalize();
       }
-    }, 5000);
-
-    void enqueueAdLoad(
-      () =>
-        new Promise((resolve) => {
-          resolveLoad = resolve;
-          if (!containerRef.current) {
-            resolve();
-            return;
-          }
-
-          invokeScript.onload = () => {
-            resolve();
-            void finalize();
-          };
-          invokeScript.onerror = () => {
-            if (isActive) {
-              setAdBlocked(true);
-            }
-            deleteAdRegistry(containerId);
-            resolve();
-            void finalize();
-          };
-
-          if (!usesContainerId) {
-            window.atOptions = adOptions;
-          }
-          container.appendChild(invokeScript);
-        })
-    );
+    }, 8000);
 
     return () => {
       isActive = false;
